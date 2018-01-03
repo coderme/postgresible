@@ -1,0 +1,87 @@
+---
+
+- name: sysctl - keep swappiness to minimium
+  sysctl:
+          name: vm.swappiness
+          value: 1
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+- name: sysctl - disable ipv4 forward
+  sysctl:
+          name: net.ipv4.ip_forward
+          value: 0
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+- name: sysctl - disable ipv6 forward
+  sysctl:
+          name: net.ipv6.ip_forward
+          value: 0
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+- name: sysctl - increase ipv4 port range
+  sysctl:
+          name: net.ipv4.ip_local_port_range
+          value: 1024 65535
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+
+- name: sysctl - increase ipv6 port range
+  sysctl:
+          name: net.ipv6.ip_local_port_range
+          value: 1024 65535
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+
+- name: sysctl - enable real path filter on ipv4
+  sysctl:
+          name: net.ipv4.conf.rp_filter
+          value: 1
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+- name: sysctl - enable real path filter on ipv6
+  sysctl:
+          name: net.ipv6.conf.rp_filter
+          value: 1
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+
+- name: sysctl - increase socket max connections
+  sysctl:
+          name: net.core.somaxconn
+          value: "{{ 10000 * ansible_processor_vcpus }}"
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+
+
+- name: sysctl - increase net backlog
+  sysctl:
+          name: net.core.netdev_max_backlog
+          value: "{{ 20000 * ansible_processor_vcpus }}"
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+

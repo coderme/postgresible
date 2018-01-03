@@ -1,0 +1,17 @@
+---
+
+
+
+- hosts: dbservers
+  tasks:
+          - name: upgrade postgres
+            apt:
+                  name: postgresql
+                  state: latest
+          - name: restart postgres
+            service:
+                  name: postgresql
+                  state: restarted
+                  enabled: yes
+
+

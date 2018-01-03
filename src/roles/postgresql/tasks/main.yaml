@@ -1,0 +1,59 @@
+---
+
+- name: install/update postgresql server
+  apt:
+          name: postgresql
+          state: latest
+  
+
+- name: create postgresql backup dir
+  file:
+          path: "{{ item }}"
+          state: directory
+          owner: postgres
+          group: postgres
+          mode: 0700
+  with_items:
+          - "{{ backups_dir | default('/data/pgbackups') }}"
+
+
+- name: copy pgbackup to bin
+  template:
+          src: pgbackup.j2
+          dest: /usr/bin/pgbackup
+          mode: 0555
+          owner: postgres
+          group: postgres
+
+
+- name: copy postgres cron job
+  template:
+          src: pgcron.j2
+          dest: /etc/cron.d/pgcron
+          mode: 0644
+
+
+- name: postgresql custom configuration
+  template:
+          src: config.j2
+          dest: /etc/postgresql/9.6/main/custom_config.conf
+          mode: 0644
+  register: custom_config
+
+
+- name: add custom confguration to postgresql.conf
+  lineinfile:
+          path: /etc/postgresql/9.6/main/postgresql.conf
+          regexp: "^\\s*include\\s+'custom_config.conf'.+"
+          line: "include 'custom_config.conf'"
+          state: present 
+  register: main_config
+
+
+- name: restart postgres
+  service:
+          name: postgresql
+          state: restarted
+          enabled: yes
+  when: main_config.changed or custom_config.changed
+

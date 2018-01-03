@@ -1,0 +1,18 @@
+# memory usage
+shared_buffers = {{ (((ansible_memtotal_mb/1024.0)|round|int)*0.25)|int*1024 }}MB
+effective_cache_size = {{ (((ansible_memtotal_mb/1024.0)|round|int)*0.75)|int*1024 }}MB
+work_mem = {{ ((((ansible_memtotal_mb/1024.0)|round|int)*0.25)/max_connections*1024)|round|int }}MB
+maintenance_work_mem = {{ ((ansible_memtotal_mb/1024.0)|round|int)*64 }}MB
+
+{% if disable_inet | default(False) %}
+# listen on unix socket only
+listen = ''
+% endif %}
+
+{% if disable_row_security | default(False) %}
+# disable unused features
+row_security = off
+{% endif %}
+
+
+

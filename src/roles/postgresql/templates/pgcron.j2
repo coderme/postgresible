@@ -1,0 +1,6 @@
+# cron entry for pgbackup
+
+{{ cron_run_hour | default(21) }} {{ cron_run_minute | default(21) }} * * * postgres /usr/bin/pgbackup
+ 
+
+

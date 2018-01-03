@@ -1,0 +1,26 @@
+#! /bin/sh -e
+
+
+MAXAGE={{ backup_maxage | default(7) }}
+DIR={{ backups_dir | default('/data/pgbackups') }}
+NAME=$DIR/`date +%Y-%m-%d-%H:%M`.sql
+
+
+pg_dumpall > $NAME
+
+# try 7zip if exists
+[ `which 7z` ] && 7z a -t7z -mx9 $NAME.7z $NAME && rm -f $NAME ||  gzip -9 $NAME 
+
+
+# delete old backups if we have more than MAXFILES
+find $DIR -type f -name '*.sql.*' -mtime +$MAXAGE -delete
+
+
+
+
+
+
+
+
+
+
